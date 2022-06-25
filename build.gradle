@@ -1,0 +1,20 @@
+plugins {
+    // Support convention plugins written in Groovy. Convention plugins are build scripts in 'src/main' that automatically become available as plugins in the main build.
+    id 'groovy-gradle-plugin'
+
+    // Apply the java-library plugin for API and implementation separation.
+    id 'java-library'
+
+    id 'java'
+}
+
+group = 'com.fistkim'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+repositories {
+    mavenCentral()
+
+    // Use the plugin portal to apply community plugins in convention plugins.
+    gradlePluginPortal()
+}

@@ -1,0 +1,3 @@
+rootProject.name = 'app-frame-sample'
+include('service:sample-app')
+include('util:discovery', 'util:core-web')

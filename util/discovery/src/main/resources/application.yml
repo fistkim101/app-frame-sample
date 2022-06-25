@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: 'eureka-host'
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'

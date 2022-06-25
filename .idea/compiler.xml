@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Gradle Imported" enabled="true">
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.24/13a394eed5c4f9efb2a6d956e2086f1d81e857d9/lombok-1.18.24.jar" />
+        </processorPath>
+        <module name="app-frame-sample.service.sample-app.main" />
+        <module name="app-frame-sample.util.discovery.main" />
+      </profile>
+      <profile name="Gradle Imported" enabled="true">
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.24/13a394eed5c4f9efb2a6d956e2086f1d81e857d9/lombok-1.18.24.jar" />
+        </processorPath>
+        <module name="app-frame-sample.service.sample-app.main" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel target="16">
+      <module name="app-frame-sample.app" target="11" />
+      <module name="app-frame-sample.app.main" target="11" />
+      <module name="app-frame-sample.app.test" target="11" />
+      <module name="app-frame-sample.buildSrc" target="11" />
+      <module name="app-frame-sample.buildSrc.main" target="11" />
+      <module name="app-frame-sample.buildSrc.test" target="11" />
+      <module name="app-frame-sample.list" target="11" />
+      <module name="app-frame-sample.list.main" target="11" />
+      <module name="app-frame-sample.list.test" target="11" />
+      <module name="core-web" target="11" />
+      <module name="core-web.main" target="11" />
+      <module name="core-web.test" target="11" />
+      <module name="discovery" target="11" />
+      <module name="discovery.main" target="11" />
+      <module name="discovery.test" target="11" />
+      <module name="sample-app" target="11" />
+      <module name="sample-app.main" target="11" />
+      <module name="sample-app.test" target="11" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

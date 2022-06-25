@@ -1,0 +1,27 @@
+server:
+  port: 8761
+
+spring:
+  config:
+    activate:
+      on-profile: local
+
+# security users
+security:
+  user:
+    actuator:
+      username: actuator
+      password: 200
+    admin:
+      username: admin
+      password: 200
+
+eureka:
+  environment: local
+  instance:
+    hostname: localhost
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
