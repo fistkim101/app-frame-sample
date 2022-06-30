@@ -1,9 +1,0 @@
-spring:
-  application:
-    name: 'sample-app'
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: '*'

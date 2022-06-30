@@ -1,0 +1,47 @@
+server:
+  port: 8080
+
+spring:
+  config:
+    activate:
+      on-profile: local
+
+# security users
+security:
+  user:
+    actuator:
+      username: actuator
+      password: 200
+    admin:
+      username: admin
+      password: 200
+
+# eureka
+eureka:
+  instance:
+    hostname: localhost
+    lease-renewal-interval-in-seconds: 10
+    lease-expiration-duration-in-seconds: 20
+  client:
+    healthcheck:
+      enabled: true
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://${security.user.actuator.username}:${security.user.actuator.password}@localhost:8761/eureka/
+    enabled: false
+
+cache:
+  hazelcast:
+    instance-name: 'sample-app'
+    management-enabled: false
+    map-settings:
+      property-relations:
+        type-id: 1
+        backup-count: 0
+        async-backup-count: 1
+        max-size: 5_000_000
+        max-size-policy: PER_NODE
+        time-to-live-seconds: 300 # 5 min
+        class-name: com.fistkim.sampleapp.user.domain.ServiceUser.java
+        statistics-enabled: true

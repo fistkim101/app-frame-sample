@@ -8,18 +8,21 @@
         <processorPath useClasspath="false">
           <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.24/13a394eed5c4f9efb2a6d956e2086f1d81e857d9/lombok-1.18.24.jar" />
         </processorPath>
-        <module name="app-frame-sample.service.sample-app.main" />
+        <module name="app-frame-sample.application.sample-app.main" />
+        <module name="app-frame-sample.util.security-core.main" />
         <module name="app-frame-sample.util.discovery.main" />
       </profile>
       <profile name="Gradle Imported" enabled="true">
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
           <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.24/13a394eed5c4f9efb2a6d956e2086f1d81e857d9/lombok-1.18.24.jar" />
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-configuration-processor/2.7.1/f36230aff2834f4fa07e1fc30544a6f8ce54bd19/spring-boot-configuration-processor-2.7.1.jar" />
         </processorPath>
-        <module name="app-frame-sample.service.sample-app.main" />
+        <module name="app-frame-sample.core.service-core.main" />
+        <module name="app-frame-sample.util.cache-support.main" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel target="16">
+    <bytecodeTargetLevel target="11">
       <module name="app-frame-sample.app" target="11" />
       <module name="app-frame-sample.app.main" target="11" />
       <module name="app-frame-sample.app.test" target="11" />
@@ -29,6 +32,12 @@
       <module name="app-frame-sample.list" target="11" />
       <module name="app-frame-sample.list.main" target="11" />
       <module name="app-frame-sample.list.test" target="11" />
+      <module name="app-frame-sample.service.sample-app" target="11" />
+      <module name="app-frame-sample.service.sample-app.main" target="11" />
+      <module name="app-frame-sample.service.sample-app.test" target="11" />
+      <module name="cache-support" target="11" />
+      <module name="cache-support.main" target="11" />
+      <module name="cache-support.test" target="11" />
       <module name="core-web" target="11" />
       <module name="core-web.main" target="11" />
       <module name="core-web.test" target="11" />
@@ -39,5 +48,11 @@
       <module name="sample-app.main" target="11" />
       <module name="sample-app.test" target="11" />
     </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="cache-support" options="-parameters" />
+      <module name="test-app" options="-parameters" />
+    </option>
   </component>
 </project>

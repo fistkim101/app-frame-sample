@@ -8,21 +8,25 @@ group = 'com.fistkim'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
-repositories {
-    mavenCentral()
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
 
-ext {
-    set('springCloudVersion', "2021.0.3")
+repositories {
+    mavenCentral()
 }
 
 dependencies {
 
     // project
+    implementation project(':util:cache-support')
     implementation project(':core:service-core')
     implementation project(':util:security-core')
 
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
 
     // spring security
     implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -30,7 +34,12 @@ dependencies {
 
     // spring cloud
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-server'
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+
+    // micrometer
+    implementation 'io.micrometer:micrometer-core'
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+//    implementation 'io.github.mweirauch:micrometer-jvm-extras:0.2.2'
 
     // lombok
     compileOnly 'org.projectlombok:lombok'
@@ -38,12 +47,13 @@ dependencies {
 
     // test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'io.projectreactor:reactor-test'
     testImplementation 'org.springframework.security:spring-security-test'
 }
 
 dependencyManagement {
     imports {
-        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}")
     }
 }
 

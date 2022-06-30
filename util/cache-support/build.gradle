@@ -1,0 +1,41 @@
+plugins {
+    id 'org.springframework.boot' version '2.7.1'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+}
+
+group = 'com.fistkim'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+    // project
+    implementation project(':core:service-core')
+
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+    // lombok
+    annotationProcessor 'org.projectlombok:lombok'
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
+    // cache
+    implementation "com.hazelcast:hazelcast-all:${hazelcastVersion}"
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:${cborVersion}"
+    implementation 'org.projectlombok:lombok:1.18.20'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'io.projectreactor:reactor-test'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+task prepareKotlinBuildScriptModel {
+
+}

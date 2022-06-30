@@ -1,12 +1,18 @@
 spring:
   application:
-    name: 'eureka-host'
+    name: 'sample-app'
 
 management:
+  metrics:
+    export:
+      prometheus:
+        enabled: true
   endpoints:
     web:
       exposure:
-        include: '*'
+        include: "*"
+
 #logging:
 #  level:
 #    root: debug
+
