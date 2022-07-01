@@ -16,3 +16,17 @@ management:
 #  level:
 #    root: debug
 
+cache:
+  hazelcast:
+    cluster-name: 'sample-app-cluster'
+    management-enabled: false
+    map-settings:
+      service-user:
+        type-id: 1
+        backup-count: 0
+        async-backup-count: 1
+        max-size: 5_000_000
+        max-size-policy: PER_NODE
+        time-to-live-seconds: 300 # 5 min
+        class-name: com.fistkim.sampleapp.user.domain.ServiceUser
+        statistics-enabled: true

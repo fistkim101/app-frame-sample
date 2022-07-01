@@ -5,18 +5,24 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.cbor.CBORFactory;
 import com.fistkim.cachesupport.support.ObjectMapperFactory;
 import com.fistkim.servicecore.support.ApplicationEnvironment;
+import com.hazelcast.client.HazelcastClient;
+import com.hazelcast.client.config.ClientConfig;
+import com.hazelcast.client.config.ClientConnectionStrategyConfig;
+import com.hazelcast.client.config.ClientNetworkConfig;
+import com.hazelcast.client.config.ConnectionRetryConfig;
 import com.hazelcast.config.*;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.nio.serialization.ByteArraySerializer;
+import com.hazelcast.spring.cache.HazelcastCacheManager;
+import lombok.SneakyThrows;
+import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.ClassUtils;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Configuration
@@ -26,31 +32,102 @@ public class CacheConfiguration {
     private ApplicationEnvironment applicationEnvironment;
     private ObjectMapperFactory objectMapperFactory;
 
+    public CacheConfiguration(HazelcastConfiguration hazelcastConfiguration, ApplicationEnvironment applicationEnvironment, ObjectMapperFactory objectMapperFactory) {
+        this.hazelcastConfiguration = hazelcastConfiguration;
+        this.applicationEnvironment = applicationEnvironment;
+        this.objectMapperFactory = objectMapperFactory;
+    }
+
+//    @SneakyThrows
+//    @Bean
+//    public ClientConfig hazelcastClientConfig() {
+//        ClientConfig clientConfig = new ClientConfig();
+////        clientConfig.setProperty(Statistics.ENABLED.getName(), "true");
+////        clientConfig.setProperty(ClientProperty.HEARTBEAT_TIMEOUT.getName(), "1500"); // Cache get, put 요청 타임아웃에 영향
+////        clientConfig.setProperty(ClientProperty.HEARTBEAT_INTERVAL.getName(), "500");
+////        clientConfig.setProperty(ClientProperty.INVOCATION_TIMEOUT_SECONDS.getName(), "2");
+//
+//        // 연결 재시도 부분 설정
+//        ConnectionRetryConfig connectionRetryConfig = new ConnectionRetryConfig();
+//        connectionRetryConfig.setInitialBackoffMillis(1 * 60 * 1000);   // 1 min
+//        connectionRetryConfig.setMaxBackoffMillis(2 * 60 * 1000);       // 2 min
+////        connectionRetryConfig.setEnabled(true);
+//
+//        ClientConnectionStrategyConfig clientConnectionStrategyConfig = new ClientConnectionStrategyConfig();
+//        clientConnectionStrategyConfig.setAsyncStart(true);
+//        clientConnectionStrategyConfig.setReconnectMode(ClientConnectionStrategyConfig.ReconnectMode.ASYNC);
+//        clientConnectionStrategyConfig.setConnectionRetryConfig(connectionRetryConfig);
+//
+//        clientConfig.setConnectionStrategyConfig(clientConnectionStrategyConfig);
+//
+//        // network config
+//        ClientNetworkConfig networkConfig = clientConfig.getNetworkConfig();
+//        networkConfig.setAddresses(hazelcastSettings.getAddresses())
+//                .setSmartRouting(true)
+//                // .setRedoOperation(true)
+//                .setConnectionTimeout(1500)
+//                // .setConnectionAttemptPeriod(2000)
+//                .setConnectionAttemptPeriod(2000)
+//                .setConnectionAttemptLimit(7200);
+//
+//        // 타입별 serialization config 설정
+//        Map<String, MapSettings> mapSettingsMap = hazelcastSettings.getMapSettings();
+//        List<String> cacheNames = Arrays.asList(
+//                ProductCacheType.PROPERTY_MAPPINGS,
+//                ProductCacheType.ROOM_TYPE_MAPPINGS,
+//                ProductCacheType.INTERNAL_POLICIES,
+//                ProductCacheType.INTERNAL_POLICY_ATTRIBUTES,
+//                ProductCacheType.INTERNAL_POLICY_ROLES,
+//                ProductCacheType.PROMOTION_INVENTORIES,
+//                ProductCacheType.INTERNAL_COMMON_POLICIES,
+//                ProductCacheType.INTERNAL_COMMON_POLICIES_APPLY_TARGET);
+//
+//        for (String cacheName : cacheNames) {
+//            MapSettings mapSettings = mapSettingsMap.get(cacheName);
+//            if (mapSettings.getSerializerTypeId() > 0) {
+//                Class<?> cls = Objects.requireNonNull(ClassUtils.getDefaultClassLoader()).loadClass(mapSettings.getClassName());
+//                clientConfig.getSerializationConfig()
+//                        .addSerializerConfig(new SerializerConfig()
+//                                .setTypeClass(cls)
+//                                .setImplementation(new HazelcastJacksonSerializer<>(hazelcastBinaryObjectMapper(), cls, mapSettings.getSerializerTypeId())));
+//            }
+//        }
+//        return clientConfig;
+//    }
+
+    @Bean("hazelcastInstance")
+    public HazelcastInstance hazelcastInstance() {
+        HazelcastInstance client = HazelcastClient.newHazelcastClient(hazelcastClientConfig());
+        client.getLifecycleService().addLifecycleListener(event -> log.info("Hazelcast LifecycleEvent event : {}", event));
+        return client;
+    }
+
     @Bean("hazelcastMember")
     public HazelcastInstance hazelcastMember() {
         Config memberConfiguration = this.hazelcastConfig();
         return Hazelcast.newHazelcastInstance(memberConfiguration);
     }
 
-//    @Bean
-//    public CacheManager cacheManager() {
-//        HazelcastCacheManager hazelcastCacheManager = new HazelcastCacheManager(this.hazelcastMember());
-//        hazelcastConfiguration.getMapSettings().keySet()
-//            .forEach(hazelcastCacheManager::getCache);
-//        return hazelcastCacheManager;
-//    }
+    @Bean
+    public CacheManager cacheManager() {
+        HazelcastCacheManager hazelcastCacheManager = new HazelcastCacheManager(this.hazelcastMember());
+        hazelcastConfiguration.getMapSettings().keySet()
+                .forEach(hazelcastCacheManager::getCache);
+        return hazelcastCacheManager;
+    }
 
     private Config hazelcastConfig() {
-        String memberName = applicationEnvironment.getApplicationName();
-        if (hazelcastConfiguration.getInstanceName() != null) {
-            memberName = hazelcastConfiguration.getInstanceName();
+        String instanceName = applicationEnvironment.getApplicationName();
+        String clusterName = this.hazelcastConfiguration.getClusterName();
+        if (instanceName != null) {
+            clusterName = instanceName;
         }
 
         Config configuration = new Config();
-        configuration.setInstanceName(memberName);
-        configuration.setClusterName(memberName);
+        configuration.setInstanceName(instanceName);
+        configuration.setClusterName(clusterName);
 
-        this.applyNetworkSetting(memberName, configuration);
+        this.applyNetworkSetting(clusterName, configuration);
         this.applyMapSetting(configuration);
         this.applyManagementSetting(configuration);
 
@@ -60,7 +137,7 @@ public class CacheConfiguration {
         return configuration;
     }
 
-    private void applyNetworkSetting(String memberName, Config configuration) {
+    private void applyNetworkSetting(String clusterName, Config configuration) {
         JoinConfig joinConfiguration = configuration.getNetworkConfig().getJoin();
         joinConfiguration.getMulticastConfig().setEnabled(false);
 
@@ -76,7 +153,7 @@ public class CacheConfiguration {
                 .setProperty("region", "ap-northeast-2")
                 .setProperty("use-public-ip", "false")
                 .setProperty("tag-key", "RhHazelcastClusterName")
-                .setProperty("tag-value", environmentName + "-hz-cluster-" + memberName);
+                .setProperty("tag-value", environmentName + clusterName);
     }
 
     private void applyMapSetting(Config configuration) {

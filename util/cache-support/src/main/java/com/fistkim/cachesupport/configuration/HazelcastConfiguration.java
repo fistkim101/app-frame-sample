@@ -10,7 +10,7 @@ import java.util.Map;
 @Getter
 public class HazelcastConfiguration {
 
-    private String instanceName;
+    private String clusterName;
     private boolean managementEnabled;
     private Map<String, HazelcastMapSettings> mapSettings;
 
